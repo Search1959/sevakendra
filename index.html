@@ -1,13 +1,90 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Seva Desk | Ward & Panchayat Digital Citizen Service OS</title>
+    <meta name="title" content="Seva Desk | Ward & Panchayat Digital Citizen Service OS" />
+    <meta name="description" content="Seva Desk is an advanced digital operating system for Ward and Panchayat Seva Kendras. Features AI document OCR scanning, real-time token queues, government scheme eligibility matching, and automated WhatsApp status receipts." />
+    <meta name="keywords" content="Seva Desk, Seva Kendra, Ward Citizen Portal, Panchayat Seva Kendra, Lakshmir Bhandar, Government Services West Bengal, Citizen Assistance Portal, AI Form Scanning, Digital Civic OS, WB Citizen Portal, Token Queue System, Ward Councillor Office System" />
+    <meta name="author" content="Seva Desk Civic OS Team" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="theme-color" content="#f97316" />
+    <link rel="canonical" href="https://sevakendra-xi.vercel.app/" />
+
+    <!-- Language Alternate Tags for Internationalization -->
+    <link rel="alternate" hreflang="en" href="https://sevakendra-xi.vercel.app/?lang=en" />
+    <link rel="alternate" hreflang="bn" href="https://sevakendra-xi.vercel.app/?lang=bn" />
+    <link rel="alternate" hreflang="hi" href="https://sevakendra-xi.vercel.app/?lang=hi" />
+    <link rel="alternate" hreflang="x-default" href="https://sevakendra-xi.vercel.app/" />
+
+    <!-- Open Graph / Facebook / WhatsApp Social Cards -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sevakendra-xi.vercel.app/" />
+    <meta property="og:site_name" content="Seva Desk" />
+    <meta property="og:title" content="Seva Desk - Ward & Panchayat Digital Citizen Service OS" />
+    <meta property="og:description" content="Empowering every Ward & Panchayat Seva Kendra with AI paper form OCR, real-time token queues, scheme eligibility finder, and instant WhatsApp receipts." />
+    <meta property="og:image" content="https://sevakendra-xi.vercel.app/favicon.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="bn_IN" />
+    <meta property="og:locale:alternate" content="hi_IN" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://sevakendra-xi.vercel.app/" />
+    <meta name="twitter:title" content="Seva Desk - Ward & Panchayat Digital Citizen Service OS" />
+    <meta name="twitter:description" content="Digital Operating System for Ward & Panchayat Seva Kendras with AI OCR form scanning, token queue management, scheme eligibility finder, and WhatsApp alerts." />
+    <meta name="twitter:image" content="https://sevakendra-xi.vercel.app/favicon.svg" />
+
+    <!-- Favicon Links -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Structured Data JSON-LD Schema -->
+    <script type="application/ld+json">
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Seva Desk",
+        "url": "https://sevakendra-xi.vercel.app/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://sevakendra-xi.vercel.app/?ward={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "GovernmentOrganization",
+        "name": "Seva Desk National Civic OS",
+        "url": "https://sevakendra-xi.vercel.app/",
+        "logo": "https://sevakendra-xi.vercel.app/favicon.svg",
+        "description": "Digital citizen service delivery network for local Ward & Panchayat administration.",
+        "areaServed": ["Kolkata", "Howrah", "North 24 Parganas", "South 24 Parganas", "Hooghly"],
+        "knowsLanguage": ["English", "Bengali", "Hindi"]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Seva Desk Ward OS",
+        "operatingSystem": "Web, Cloud, Android",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        }
+      }
+    ]
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

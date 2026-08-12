@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, 
   Search, 
@@ -95,23 +95,84 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     }
   ];
 
-  // Schema.org Structured Data snippet for SEO
-  const jsonLdSchema = {
-    "@context": "https://schema.org",
-    "@type": "GovernmentService",
-    "name": "Seva Desk - Citizens & Ward Services Platform",
-    "serviceType": "Public Assistance & Citizen Service Delivery",
-    "provider": {
-      "@type": "GovernmentOrganization",
-      "name": "Seva Desk National Citizen Network"
-    },
-    "areaServed": ["Kolkata", "Howrah", "North 24 Parganas", "South 24 Parganas", "Hooghly"],
-    "availableLanguage": ["English", "Hindi", "Bengali"],
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "INR"
+  // Dynamic Document Metadata and Language Sync for Search Engines
+  useEffect(() => {
+    document.documentElement.lang = language;
+    const langTitles = {
+      en: 'Seva Desk | Ward & Panchayat Digital Citizen Service OS',
+      bn: 'সেবা ডেস্ক | ওয়ার্ড ও পঞ্চায়েত ডিজিটাল সেবা পোর্টাল',
+      hi: 'सेवा डेस्क | वार्ड एवं पंचायत डिजिटल सेवा प्रणाली'
+    };
+    const langDescriptions = {
+      en: 'Digital Operating System for Ward & Panchayat Seva Kendras. Real-time token queue, AI paper form OCR, scheme eligibility matching, and automated WhatsApp receipts.',
+      bn: 'ওয়ার্ড ও পঞ্চায়েত সেবা কেন্দ্র পরিচালনার জন্য ডিজিটাল অপারেটিং সিস্টেম। এআই ফর্ম স্ক্যান, লাইভ কাতার এবং হোয়াটসঅ্যাপ রসিদ ব্যবস্থা।',
+      hi: 'वार्ड और पंचायत सेवा केंद्रों के लिए डिजिटल ऑपरेटिंग सिस्टम। लाइव टोकन कतार, एआई फॉर्म स्कैनिंग और व्हाट्सएप रसीद सिस्टम।'
+    };
+
+    document.title = langTitles[language] || langTitles.en;
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', langDescriptions[language] || langDescriptions.en);
     }
+  }, [language]);
+
+  // Schema.org Structured Data graph for Google Rich Snippets & Search Features
+  const jsonLdGraph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "GovernmentService",
+        "name": "Seva Desk - Citizens & Ward Services Platform",
+        "serviceType": "Public Assistance & Citizen Service Delivery",
+        "provider": {
+          "@type": "GovernmentOrganization",
+          "name": "Seva Desk National Citizen Network",
+          "url": "https://sevakendra-xi.vercel.app/"
+        },
+        "areaServed": ["Kolkata", "Howrah", "North 24 Parganas", "South 24 Parganas", "Hooghly"],
+        "availableLanguage": ["English", "Hindi", "Bengali"],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": faqs.map(faq => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.a
+          }
+        }))
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://sevakendra-xi.vercel.app/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Ward Search",
+            "item": "https://sevakendra-xi.vercel.app/#ward-search"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Live Demo",
+            "item": "https://sevakendra-xi.vercel.app/?view=demo"
+          }
+        ]
+      }
+    ]
   };
 
   return (
@@ -120,7 +181,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Schema.org Structured Data Injection */}
       <script 
         type="application/ld+json" 
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }} 
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }} 
       />
 
       {/* Top Indian Civic Tricolor Accent Stripe */}

@@ -1,0 +1,6 @@
+# Seva Desk - Ward & Panchayat Citizen Service Operating System
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sevakendra-xi.vercel.app/sitemap.xml
