@@ -11,8 +11,7 @@ import {
   AuditLogItem, 
   FeedbackItem,
   SystemUser,
-  UserAccount,
-  Role
+  UserAccount
 } from '../types';
 
 import { 
@@ -29,6 +28,14 @@ import {
   SYSTEM_USERS,
   INITIAL_ACCOUNTS 
 } from '../data/initialData';
+
+import { 
+  COLLECTIONS, 
+  saveToFirestore, 
+  deleteFromFirestore, 
+  subscribeToCollection, 
+  seedInitialFirestoreData 
+} from './firestoreService';
 
 const STORAGE_KEYS = {
   KENDRAS: 'sevadesk_kendras',
@@ -55,9 +62,32 @@ export interface OfflineAction {
   timestamp: string;
 }
 
+type Listener = () => void;
+
 class StorageService {
+  private listeners: Set<Listener> = new Set();
+  private isFirebaseInitialized = false;
+
   constructor() {
     this.initDefaultData();
+    this.initFirebaseSync();
+  }
+
+  public subscribe(listener: Listener): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(fn => {
+      try {
+        fn();
+      } catch (e) {
+        console.error('Storage listener error:', e);
+      }
+    });
   }
 
   private initDefaultData() {
@@ -95,11 +125,76 @@ class StorageService {
       localStorage.setItem(STORAGE_KEYS.CURRENT_KENDRA, JSON.stringify(INITIAL_KENDRAS[0]));
     }
     if (!localStorage.getItem(STORAGE_KEYS.CURRENT_USER)) {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(SYSTEM_USERS[1])); // Operator by default
+      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(SYSTEM_USERS[1]));
     }
     if (!localStorage.getItem(STORAGE_KEYS.ACCOUNTS)) {
       localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(INITIAL_ACCOUNTS));
     }
+  }
+
+  private async initFirebaseSync() {
+    if (this.isFirebaseInitialized) return;
+    this.isFirebaseInitialized = true;
+
+    // Seed database if empty
+    await seedInitialFirestoreData();
+
+    // Subscribe to Firestore collections in real time
+    subscribeToCollection<Citizen>(COLLECTIONS.CITIZENS, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.CITIZENS, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
+
+    subscribeToCollection<SevaApplication>(COLLECTIONS.APPLICATIONS, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
+
+    subscribeToCollection<QueueToken>(COLLECTIONS.TOKENS, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.TOKENS, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
+
+    subscribeToCollection<PaymentRecord>(COLLECTIONS.PAYMENTS, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.PAYMENTS, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
+
+    subscribeToCollection<UserAccount>(COLLECTIONS.ACCOUNTS, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
+
+    subscribeToCollection<SevaKendra>(COLLECTIONS.KENDRAS, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.KENDRAS, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
+
+    subscribeToCollection<ServiceItem>(COLLECTIONS.SERVICES, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
+
+    subscribeToCollection<GovernmentScheme>(COLLECTIONS.SCHEMES, (items) => {
+      if (items && items.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.SCHEMES, JSON.stringify(items));
+        this.notifyListeners();
+      }
+    });
   }
 
   // System User Accounts
@@ -108,6 +203,7 @@ class StorageService {
   }
   saveAccounts(accounts: UserAccount[]): void {
     localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(accounts));
+    this.notifyListeners();
   }
   saveAccount(account: UserAccount): UserAccount {
     const list = this.getAccounts();
@@ -119,12 +215,14 @@ class StorageService {
     }
     this.saveAccounts(list);
     this.addAuditLog('USER_ACCOUNT_SAVED', 'UserAccount', account.id, `Created/Updated account for ${account.name} (${account.role})`);
+    saveToFirestore(COLLECTIONS.ACCOUNTS, account, account.id);
     return account;
   }
   deleteAccount(id: string): void {
     const list = this.getAccounts().filter(a => a.id !== id);
     this.saveAccounts(list);
     this.addAuditLog('USER_ACCOUNT_DELETED', 'UserAccount', id, `Deleted account ID ${id}`);
+    deleteFromFirestore(COLLECTIONS.ACCOUNTS, id);
   }
 
   // Kendras
@@ -136,6 +234,23 @@ class StorageService {
   }
   setCurrentKendra(kendra: SevaKendra): void {
     localStorage.setItem(STORAGE_KEYS.CURRENT_KENDRA, JSON.stringify(kendra));
+    this.notifyListeners();
+  }
+  saveKendra(kendra: SevaKendra): SevaKendra {
+    const list = this.getKendras();
+    const idx = list.findIndex(k => k.id === kendra.id);
+    if (idx >= 0) list[idx] = kendra;
+    else list.unshift(kendra);
+    localStorage.setItem(STORAGE_KEYS.KENDRAS, JSON.stringify(list));
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.KENDRAS, kendra, kendra.id);
+    return kendra;
+  }
+  deleteKendra(id: string): void {
+    const list = this.getKendras().filter(k => k.id !== id);
+    localStorage.setItem(STORAGE_KEYS.KENDRAS, JSON.stringify(list));
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.KENDRAS, id);
   }
 
   // Users & Role
@@ -144,6 +259,7 @@ class StorageService {
   }
   setCurrentUser(user: SystemUser): void {
     localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+    this.notifyListeners();
   }
 
   // Citizens
@@ -160,12 +276,16 @@ class StorageService {
     }
     localStorage.setItem(STORAGE_KEYS.CITIZENS, JSON.stringify(list));
     this.addAuditLog('CITIZEN_UPDATED', 'Citizen', citizen.citizenId, `Saved/Updated ${citizen.fullName} (${citizen.mobile})`);
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.CITIZENS, citizen, citizen.id);
     return citizen;
   }
   deleteCitizen(id: string): void {
     const list = this.getCitizens().filter(c => c.id !== id && c.citizenId !== id);
     localStorage.setItem(STORAGE_KEYS.CITIZENS, JSON.stringify(list));
     this.addAuditLog('CITIZEN_DELETED', 'Citizen', id, `Deleted citizen ID ${id}`);
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.CITIZENS, id);
   }
   importCitizensBulk(citizens: Citizen[]): number {
     const existing = this.getCitizens();
@@ -175,6 +295,8 @@ class StorageService {
     const merged = Array.from(mergedMap.values());
     localStorage.setItem(STORAGE_KEYS.CITIZENS, JSON.stringify(merged));
     this.addAuditLog('CITIZENS_BULK_IMPORTED', 'Citizen', 'bulk', `Imported ${citizens.length} citizens`);
+    this.notifyListeners();
+    citizens.forEach(c => saveToFirestore(COLLECTIONS.CITIZENS, c, c.id));
     return merged.length;
   }
 
@@ -188,20 +310,27 @@ class StorageService {
     if (idx >= 0) list[idx] = service;
     else list.unshift(service);
     localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(list));
-    this.addAuditLog('SERVICE_SAVED', 'ServiceItem', service.id, `Saved service ${service.nameEn}`);
+    this.addAuditLog('SERVICE_SAVED', 'ServiceItem', service.id, `Saved service ${service.name}`);
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.SERVICES, service, service.id);
     return service;
   }
   deleteService(id: string): void {
     const list = this.getServices().filter(s => s.id !== id);
     localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(list));
     this.addAuditLog('SERVICE_DELETED', 'ServiceItem', id, `Deleted service ID ${id}`);
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.SERVICES, id);
   }
   importServicesBulk(services: ServiceItem[]): void {
     const existing = this.getServices();
     const mergedMap = new Map<string, ServiceItem>();
     existing.forEach(s => mergedMap.set(s.id, s));
     services.forEach(s => mergedMap.set(s.id, s));
-    localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(Array.from(mergedMap.values())));
+    const merged = Array.from(mergedMap.values());
+    localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(merged));
+    this.notifyListeners();
+    services.forEach(s => saveToFirestore(COLLECTIONS.SERVICES, s, s.id));
   }
 
   // Schemes
@@ -215,12 +344,16 @@ class StorageService {
     else list.unshift(scheme);
     localStorage.setItem(STORAGE_KEYS.SCHEMES, JSON.stringify(list));
     this.addAuditLog('SCHEME_SAVED', 'GovernmentScheme', scheme.id, `Saved scheme ${scheme.schemeName}`);
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.SCHEMES, scheme, scheme.id);
     return scheme;
   }
   deleteScheme(id: string): void {
     const list = this.getSchemes().filter(s => s.id !== id);
     localStorage.setItem(STORAGE_KEYS.SCHEMES, JSON.stringify(list));
     this.addAuditLog('SCHEME_DELETED', 'GovernmentScheme', id, `Deleted scheme ID ${id}`);
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.SCHEMES, id);
   }
 
   // Applications
@@ -240,19 +373,26 @@ class StorageService {
     }
     localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(list));
     this.addAuditLog('APPLICATION_UPDATED', 'SevaApplication', app.sevaId, `Status updated to ${app.status}`);
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.APPLICATIONS, app, app.id);
     return app;
   }
   deleteApplication(id: string): void {
     const list = this.getApplications().filter(a => a.id !== id && a.sevaId !== id);
     localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(list));
     this.addAuditLog('APPLICATION_DELETED', 'SevaApplication', id, `Deleted application ${id}`);
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.APPLICATIONS, id);
   }
   importApplicationsBulk(apps: SevaApplication[]): void {
     const existing = this.getApplications();
     const mergedMap = new Map<string, SevaApplication>();
     existing.forEach(a => mergedMap.set(a.id, a));
     apps.forEach(a => mergedMap.set(a.id, a));
-    localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(Array.from(mergedMap.values())));
+    const merged = Array.from(mergedMap.values());
+    localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(merged));
+    this.notifyListeners();
+    apps.forEach(a => saveToFirestore(COLLECTIONS.APPLICATIONS, a, a.id));
   }
 
   // Tokens
@@ -265,11 +405,15 @@ class StorageService {
     if (idx >= 0) list[idx] = token;
     else list.unshift(token);
     localStorage.setItem(STORAGE_KEYS.TOKENS, JSON.stringify(list));
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.TOKENS, token, token.id);
     return token;
   }
   deleteToken(id: string): void {
     const list = this.getTokens().filter(t => t.id !== id && t.tokenNumber !== id);
     localStorage.setItem(STORAGE_KEYS.TOKENS, JSON.stringify(list));
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.TOKENS, id);
   }
 
   // Appointments
@@ -282,11 +426,15 @@ class StorageService {
     if (idx >= 0) list[idx] = apt;
     else list.unshift(apt);
     localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(list));
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.APPOINTMENTS, apt, apt.id);
     return apt;
   }
   deleteAppointment(id: string): void {
     const list = this.getAppointments().filter(a => a.id !== id);
     localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(list));
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.APPOINTMENTS, id);
   }
 
   // Payments
@@ -300,25 +448,15 @@ class StorageService {
     else list.unshift(payment);
     localStorage.setItem(STORAGE_KEYS.PAYMENTS, JSON.stringify(list));
     this.addAuditLog('PAYMENT_RECEIVED', 'PaymentRecord', payment.receiptNumber, `Amount ₹${payment.total} (${payment.paymentMethod})`);
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.PAYMENTS, payment, payment.id);
     return payment;
   }
   deletePayment(id: string): void {
     const list = this.getPayments().filter(p => p.id !== id && p.receiptNumber !== id);
     localStorage.setItem(STORAGE_KEYS.PAYMENTS, JSON.stringify(list));
-  }
-
-  // Kendras
-  saveKendra(kendra: SevaKendra): SevaKendra {
-    const list = this.getKendras();
-    const idx = list.findIndex(k => k.id === kendra.id);
-    if (idx >= 0) list[idx] = kendra;
-    else list.unshift(kendra);
-    localStorage.setItem(STORAGE_KEYS.KENDRAS, JSON.stringify(list));
-    return kendra;
-  }
-  deleteKendra(id: string): void {
-    const list = this.getKendras().filter(k => k.id !== id);
-    localStorage.setItem(STORAGE_KEYS.KENDRAS, JSON.stringify(list));
+    this.notifyListeners();
+    deleteFromFirestore(COLLECTIONS.PAYMENTS, id);
   }
 
   // Notifications
@@ -329,6 +467,8 @@ class StorageService {
     const list = this.getNotifications();
     list.unshift(log);
     localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(list));
+    this.notifyListeners();
+    saveToFirestore(COLLECTIONS.NOTIFICATIONS, log, log.id);
     return log;
   }
   saveNotification(log: any): any {
@@ -344,9 +484,9 @@ class StorageService {
     const list = this.getAuditLogs();
     const newLog: AuditLogItem = {
       id: `audit-${Date.now()}`,
-      userId: user.id,
-      userName: user.name,
-      role: user.role,
+      userId: user.id || 'system',
+      userName: user.name || 'System',
+      role: user.role || 'OPERATOR',
       action,
       entity,
       entityId,
@@ -355,6 +495,7 @@ class StorageService {
     };
     list.unshift(newLog);
     localStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, JSON.stringify(list));
+    saveToFirestore(COLLECTIONS.AUDIT_LOGS, newLog, newLog.id);
   }
 
   // Offline Sync Queue

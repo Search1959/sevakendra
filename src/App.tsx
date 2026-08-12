@@ -54,14 +54,22 @@ export default function App() {
 
   const [showAiModal, setShowAiModal] = useState(false);
 
+  const [, setSyncCounter] = useState<number>(0);
+
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+
+    const unsubscribe = storage.subscribe(() => {
+      setSyncCounter(prev => prev + 1);
+    });
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      unsubscribe();
     };
   }, []);
 

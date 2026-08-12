@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "citizens": {
+      "title": "Citizens",
+      "description": "Registered citizens and family profiles seeking civic assistance.",
+      "type": "object",
+      "properties": {
+        "citizenId": { "type": "string" },
+        "fullName": { "type": "string" },
+        "mobile": { "type": "string" },
+        "whatsApp": { "type": "string" },
+        "gender": { "type": "string" },
+        "dob": { "type": "string" },
+        "address": { "type": "string" },
+        "district": { "type": "string" },
+        "localBody": { "type": "string" },
+        "ward": { "type": "string" },
+        "pin": { "type": "string" },
+        "occupation": { "type": "string" },
+        "incomeRange": { "type": "string" },
+        "category": { "type": "string" },
+        "religion": { "type": "string" },
+        "rationCardType": { "type": "string" },
+        "rationCardNo": { "type": "string" },
+        "maritalStatus": { "type": "string" },
+        "aadhaarLast4": { "type": "string" },
+        "kendraId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["fullName", "mobile"]
+    },
+    "applications": {
+      "title": "Seva Applications",
+      "description": "Applications submitted at Seva Kendras for government services.",
+      "type": "object",
+      "properties": {
+        "sevaId": { "type": "string" },
+        "citizenId": { "type": "string" },
+        "citizenName": { "type": "string" },
+        "citizenMobile": { "type": "string" },
+        "kendraId": { "type": "string" },
+        "kendraName": { "type": "string" },
+        "serviceId": { "type": "string" },
+        "serviceName": { "type": "string" },
+        "assignedOperator": { "type": "string" },
+        "priority": { "type": "string" },
+        "status": { "type": "string" },
+        "govtFee": { "type": "number" },
+        "assistanceFee": { "type": "number" },
+        "paymentStatus": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["sevaId", "citizenName", "serviceName", "status"]
+    },
+    "tokens": {
+      "title": "Queue Tokens",
+      "description": "Live daily token queue at Seva Kendras.",
+      "type": "object",
+      "properties": {
+        "tokenNumber": { "type": "string" },
+        "numberOnly": { "type": "number" },
+        "citizenName": { "type": "string" },
+        "citizenMobile": { "type": "string" },
+        "serviceName": { "type": "string" },
+        "kendraId": { "type": "string" },
+        "status": { "type": "string" },
+        "counterNo": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["tokenNumber", "status"]
+    },
+    "payments": {
+      "title": "Payment Records",
+      "description": "Transactions and receipt logs for services.",
+      "type": "object",
+      "properties": {
+        "applicationId": { "type": "string" },
+        "sevaId": { "type": "string" },
+        "citizenName": { "type": "string" },
+        "govtFee": { "type": "number" },
+        "assistanceFee": { "type": "number" },
+        "printingFee": { "type": "number" },
+        "scanningFee": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "paymentStatus": { "type": "string" },
+        "receiptNumber": { "type": "string" },
+        "kendraId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["receiptNumber", "total"]
+    },
+    "userAccounts": {
+      "title": "User Accounts",
+      "description": "Operator, Admin, and Citizen login credentials and profiles.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["username", "role"]
+    }
+  }
+}
