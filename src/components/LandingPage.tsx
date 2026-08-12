@@ -53,6 +53,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const t = translations[language];
   const [kendras] = useState<SevaKendra[]>(storage.getKendras());
   
+  // Real database dynamic counts
+  const citizensCount = storage.getCitizens().length;
+  const kendrasCount = storage.getKendras().length;
+  const applicationsCount = storage.getApplications().length;
+  const servicesCount = storage.getServices().length + storage.getSchemes().length;
+  
   // Interactive Ward Search Widget State
   const [selectedDistrict, setSelectedDistrict] = useState('All');
   const [wardQuery, setWardQuery] = useState('');
@@ -295,25 +301,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-white border border-slate-200/90 rounded-[2.5rem] shadow-xl">
             <div className="bg-orange-50/70 p-4 rounded-2xl border border-orange-200/70">
-              <span className="text-2xl sm:text-3xl font-black text-slate-900 block font-mono">1.25M+</span>
+              <span className="text-2xl sm:text-3xl font-black text-slate-900 block font-mono">{citizensCount}</span>
               <span className="text-xs text-orange-950 font-black">
                 {language === 'bn' ? 'নিবন্ধিত নাগরিক' : language === 'hi' ? 'पंजीकृत नागरिक' : 'Citizens Registered'}
               </span>
             </div>
             <div className="bg-blue-50/70 p-4 rounded-2xl border border-blue-200/70">
-              <span className="text-2xl sm:text-3xl font-black text-blue-900 block font-mono">520+</span>
+              <span className="text-2xl sm:text-3xl font-black text-blue-900 block font-mono">{kendrasCount}</span>
               <span className="text-xs text-blue-950 font-black">
                 {language === 'bn' ? 'ওয়ার্ড ও পঞ্চায়েত কেন্দ্র' : language === 'hi' ? 'वार्ड एवं पंचायत केंद्र' : 'Active Seva Kendras'}
               </span>
             </div>
             <div className="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200/70">
-              <span className="text-2xl sm:text-3xl font-black text-emerald-800 block font-mono">99.8%</span>
+              <span className="text-2xl sm:text-3xl font-black text-emerald-800 block font-mono">{applicationsCount}</span>
               <span className="text-xs text-emerald-950 font-black">
-                {language === 'bn' ? 'সময়মত সেবা প্রদান' : language === 'hi' ? 'समयबद्ध सेवा वितरण' : 'On-Time Completion'}
+                {language === 'bn' ? 'মোট আবেদন' : language === 'hi' ? 'कुल आवेदन' : 'Active Applications'}
               </span>
             </div>
             <div className="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/70">
-              <span className="text-2xl sm:text-3xl font-black text-amber-900 block font-mono">35+</span>
+              <span className="text-2xl sm:text-3xl font-black text-amber-900 block font-mono">{servicesCount}</span>
               <span className="text-xs text-amber-950 font-black">
                 {language === 'bn' ? 'সরকারি স্কিম ও সার্ভিস' : language === 'hi' ? 'सरकारी योजनाएं एवं सेवाएं' : 'Government Services'}
               </span>

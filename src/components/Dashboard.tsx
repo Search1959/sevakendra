@@ -125,7 +125,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 {t.dash_citizensServed}
               </span>
               <span className="text-3xl sm:text-4xl font-black text-slate-900 font-mono tabular-nums">
-                {citizensServedToday + 42}
+                {citizensServedToday}
               </span>
             </div>
             <div className="bg-blue-50/60 p-4 rounded-2xl border border-blue-200/80">
@@ -133,7 +133,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 {t.dash_applicationsToday}
               </span>
               <span className="text-3xl sm:text-4xl font-black text-blue-900 font-mono tabular-nums">
-                {applicationsToday + 19}
+                {applicationsToday}
               </span>
             </div>
             <div className="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200/80">
@@ -141,7 +141,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 {t.dash_submittedToday}
               </span>
               <span className="text-3xl sm:text-4xl font-black text-emerald-800 font-mono tabular-nums">
-                {submittedToday + 12}
+                {submittedToday}
               </span>
             </div>
             <div className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/80">
@@ -149,7 +149,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 {t.dash_todayRevenue}
               </span>
               <span className="text-3xl sm:text-4xl font-black text-amber-900 font-mono tabular-nums">
-                ₹{todayRevenue + 1280}
+                ₹{todayRevenue}
               </span>
             </div>
           </div>
