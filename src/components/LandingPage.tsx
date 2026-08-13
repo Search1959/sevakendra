@@ -193,16 +193,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-md shadow-orange-500/20 font-black border border-orange-400/50">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-md shadow-orange-500/20 font-black border border-orange-400/50 shrink-0">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-base font-black tracking-tight text-slate-900">
-                  SEVA <span className="text-orange-600">DESK</span>
+                <span className="text-sm sm:text-base font-black tracking-tight text-slate-900 uppercase">
+                  NETAJI SUBHASH CHANDRA BOSE <span className="text-orange-600">SEVA KENDRA</span>
                 </span>
-                <span className="text-[10px] bg-orange-100 border border-orange-300 text-orange-950 font-black px-2 py-0.5 rounded-full uppercase">
-                  v2.6 Ward OS
+                <span className="text-[10px] bg-orange-100 border border-orange-300 text-orange-950 font-black px-2 py-0.5 rounded-full uppercase shrink-0 hidden md:inline-block">
+                  Ward OS
                 </span>
               </div>
               <p className="text-[10px] text-slate-600 font-bold hidden sm:block">

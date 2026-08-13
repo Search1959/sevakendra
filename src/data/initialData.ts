@@ -18,7 +18,7 @@ export const INITIAL_KENDRAS: SevaKendra[] = [
   {
     id: 'kendra-01',
     code: 'KOL-W27-SK001',
-    name: 'Kolkata Central Seva Kendra (Ward 27)',
+    name: 'Netaji Subhash Chandra Bose Seva Kendra (Ward 27)',
     address: '45A Bidhannagar Main Road, Ultadanga, Kolkata',
     pin: '700067',
     stateId: 'WB',

@@ -1,6 +1,6 @@
 {
-  "name": "Seva Desk",
-  "description": "Digital Operating System & Management Platform for Local Seva Kendras",
+  "name": "Netaji Subhash Chandra Bose Seva Kendra",
+  "description": "Digital Operating System & Management Platform for Netaji Subhash Chandra Bose Seva Kendra",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

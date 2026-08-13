@@ -98,14 +98,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <div className="flex items-center gap-3 cursor-pointer" onClick={onGoToHome} title="Go to Home / Marketing Landing Page">
-            <div className="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-black text-xl">
-              S
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-amber-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-black text-xl shrink-0">
+              N
             </div>
             <div className="hidden sm:flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-white leading-none">
-                SEVA DESK
+              <span className="text-xs sm:text-sm font-extrabold tracking-tight text-white leading-tight uppercase">
+                NETAJI SUBHASH CHANDRA BOSE <span className="text-orange-400">SEVA KENDRA</span>
               </span>
-              <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-[0.15em] mt-1">
+              <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-[0.15em] mt-0.5">
                 {language === 'bn' ? 'ডিজিটাল সেবা ব্যবস্থা' : language === 'hi' ? 'डिजिटल सेवा प्रणाली' : 'Citizen Seva OS'}
               </span>
             </div>
